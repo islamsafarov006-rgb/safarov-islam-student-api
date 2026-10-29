@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-safarov
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: student_api_db
+    volumes:
+      - pgdata_safarov:/var/lib/postgresql/data
+    networks:
+      - safarov_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d student_api_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: safarov-islam-student-api:v1.0-38061
+    container_name: app-safarov
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/student_api_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+    networks:
+      - safarov_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata_safarov:
+
+networks:
+  safarov_network:
