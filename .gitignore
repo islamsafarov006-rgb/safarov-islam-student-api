@@ -1,0 +1,6 @@
+logs/
+.env
+build/
+.gradle/
+.idea/
+OEF
